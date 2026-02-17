@@ -5,6 +5,3 @@ pandas==2.0.3
 SQLAlchemy==2.0.20
 python-dotenv==1.0.0
 lxml==4.9.3
-gunicorn==21.2.0
-selenium==4.13.0
-click==8.1.7
