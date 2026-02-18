@@ -1,32 +1,27 @@
 name: Handyman Lead Scraper
-
-on:
-  schedule:
-    - cron: '0 */6 * * *'  # Runs every 6 hours
-  workflow_dispatch:      # Allows manual run button
-
-jobs:
-  scrape:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-          
-      - name: Install dependencies
-        run: |
-          pip install requests beautifulsoup4 sqlalchemy pandas
-
-      - name: Run Scraper
-        run: python main.py --scrape
-
-      - name: Commit Database Changes
-        run: |
-          git config --global user.name 'HandymanBot'
-          git config --global user.email 'bot@noreply.github.com'
-          git add database/leads.db
-          git commit -m "Auto-update leads database" || exit 0
-          git push
+    
+    on:
+      push:
+        branches: [ main ]
+      schedule:
+        - cron: '0 0 * * *'  # Runs daily at midnight
+    
+    jobs:
+      scrape:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v3
+    
+          - name: Set up Python
+            uses: actions/setup-python@v4
+            with:
+              python-version: '3.9'
+    
+          - name: Install dependencies
+            run: |
+              if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    
+          - name: Run scraper
+            run: python main.py
+    
